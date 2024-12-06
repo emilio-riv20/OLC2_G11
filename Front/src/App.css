@@ -1,0 +1,38 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.entrada,
+.salida{
+  width: 700px;
+  height: 600px;
+  margin:15px;
+  resize: none;
+  font-size:15px;
+}
+
+.txts {
+  width: 1200px;
+  /* border: 1px, solid,wheat; */
+  margin: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.btn_accept{
+  width: 250px;
+  height: 50px;
+}
