@@ -25,14 +25,12 @@ expression
     = par:parserexpression l:locks? { 
         return l ? { type: "locked", base: par, modifier: l } : par;
     }
-    / par:parexpression l:locks? { 
-        return l ? { type: "locked", base: par, modifier: l } : par;
-    }
 
 parserexpression
     = identifier
     / literal
     / range
+    / parexpression
 
 parexpression
     = "(" _ expression:parserexpression _ expression2:(parserexpression _)* ")" { return expression; }
