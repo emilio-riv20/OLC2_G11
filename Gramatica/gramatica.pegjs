@@ -33,7 +33,7 @@ parserexpression
     / parexpression
 
 parexpression
-    = "(" _ expression:parserexpression _ expression2:(parserexpression _)* ")" { return expression; }
+    = "(" _ expression:choices _ expression2:(choices _)* ")" { return expression; }
 
 locks
     = "?" { return "?"; }
