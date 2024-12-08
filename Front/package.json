@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
-    "build": "tsc -b && vite build",
+    "deploy": "gh-pages -d Front/dist",
+    "build": "tsc -b && vite build --base=/OLC2_G11/",
     "lint": "eslint .",
     "preview": "vite preview"
   },
