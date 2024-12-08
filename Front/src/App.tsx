@@ -13,7 +13,8 @@ function App() {
 
     const HandlerClick = () => {
         try {
-            const result = parse(data); // Analiza la entrada con Peggy
+            const result = parse(data);// Analiza la entrada con Peggy
+            console.log(result)
             setOutput(`Todo bien!`); // Resultado exitoso
         } catch (error: any) {
             setOutput(`Error: ${error.message}`); // Mensaje de error
