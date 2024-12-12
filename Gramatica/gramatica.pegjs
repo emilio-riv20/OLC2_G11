@@ -27,6 +27,7 @@ expression
     = par:parserexpression l:locks? { 
         return l ? { type: "locked", base: par, modifier: l } : par;
     }
+    / "$"? _ parserexpression _ locks
 
 parserexpression
     = identifier
@@ -39,6 +40,8 @@ parserexpression
 
 groups
     = "(" _ choices _ ")"
+
+
 
 locks
     = [?+*]
