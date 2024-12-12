@@ -1,20 +1,29 @@
 name: React App Github Deploy
+
 on:
   push:
     branches:
       - "main"
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install & build
+
+      - name: Install dependencies and build
         run: |
           cd Front
-          npm i && npm run build
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@4.1.1
+          npm i
+          npm run build
+          # Verificar que la carpeta dist existe
+          ls -la Front/dist
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: Front/dist
+          token: ${{ secrets.GITHUB_TOKEN }}
