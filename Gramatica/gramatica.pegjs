@@ -1,10 +1,11 @@
 start 
-    = newline first:rule rest:(newline rule)* { 
+    = newline first:rule rest:(newline rule)* newline { 
         return [first, ...rest.map(r => r[1])]; 
     }
 
 rule 
-    = name:identifier newline string? newline "=" _ expression:choices (_ ";" _)? { 
+    = name:identifier newline string? newline "=" _ expression:choices newline? (_ ";" _)?
+    { 
         return { name: name, expression: expression }; 
     }
 
@@ -24,10 +25,14 @@ label
     = (identifier ":")? expression
 
 expression
-    = par:parserexpression l:locks? { 
-        return l ? { type: "locked", base: par, modifier: l } : par;
-    }
-    / "$"? _ parserexpression _ locks
+    = par:parserexpression l:locks? 
+    / "$"? _ parserexpression _ locks?
+    / "&"? _ parserexpression _ locks?
+    / "!"? _ parserexpression _ locks?
+    / ":"? _ parserexpression _ locks?
+    / "?"? _ parserexpression _ locks?
+    / "+"? _ parserexpression _ locks?
+    
 
 parserexpression
     = identifier
@@ -36,6 +41,7 @@ parserexpression
     / string "i"?
     / (_ "." _)+ _ (newline)? _
     / (_"!."_)+ _ (newline)? _
+    
     
 
 groups
@@ -71,4 +77,8 @@ _
     = [ \t]*  // Ignora espacios en blanco y tabs
 
 newline 
-    = [ \t\n\r]*  // Maneja saltos de línea y espacios en blanco
+    = ([ \t\n\r] / coms)*  // Maneja saltos de línea y espacios en blanco
+    
+coms 
+	="//" (![\n] .)*
+    / "/*" (!("*/") .)* "*/"
