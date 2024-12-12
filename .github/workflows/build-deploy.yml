@@ -30,6 +30,11 @@ jobs:
         run: |
           npm run build
 
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "Front/dist/"
+
   deploy:
     needs: build_site
     runs-on: ubuntu-latest
