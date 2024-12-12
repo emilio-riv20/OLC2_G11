@@ -4,7 +4,7 @@ start
     }
 
 rule 
-    = name:identifier newline string newline "=" _ expression:choices (_ ";" _)? { 
+    = name:identifier newline string? newline "=" _ expression:choices (_ ";" _)? { 
         return { name: name, expression: expression }; 
     }
 
@@ -33,6 +33,9 @@ parserexpression
     / range "i"?
     / groups
     / string "i"?
+    / "."
+    / "!."
+    
 
 groups
     = "(" _ choices _ ")"
