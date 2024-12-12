@@ -1,23 +1,53 @@
-name: React App Github Deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - "main"
+    branches: "main"
 
 jobs:
-  build:
+  build_site:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./Front
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install dependencies and build
-        run: npm install && npm run build
-
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
-          branch: gh-pages
-          folder: dist
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ./Front/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: build
+        env:
+          BASE_PATH: "/${{ github.event.repository.name }}"
+        run: |
+          npm run build
+
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "Front/build/"
+
+  deploy:
+    needs: build_site
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
