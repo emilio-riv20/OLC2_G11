@@ -4,7 +4,7 @@ start
     }
 
 rule 
-    = name:identifier newline "=" _ expression:choices (_ ";" _)? { 
+    = name:identifier newline string newline "=" _ expression:choices (_ ";" _)? { 
         return { name: name, expression: expression }; 
     }
 
@@ -30,12 +30,12 @@ expression
 
 parserexpression
     = identifier
-    / literal
-    / range
-    / parexpression
+    / range "i"?
+    / groups
+    / string "i"?
 
-parexpression
-    = "(" _ expression:choices _ expression2:(choices _)* ")" { return expression; }
+groups
+    = "(" _ choices _ ")"
 
 locks
     = [?+*]
@@ -49,9 +49,9 @@ identifier
     = name:[_a-z]i[_a-z0-9]i* { return text(); }
 
 // Cadenas de texto
-literal
-    = "'" chars:[^']* "'" { return chars.join(""); }
-    / '"' chars:[^"]* '"' { return chars.join(""); }
+string
+	= ["] [^"]* ["]
+    / ['] [^']* [']
 
 // Rango de caracteres
 range = "[" input_range+ "]"
