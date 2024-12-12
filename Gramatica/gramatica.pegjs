@@ -1,10 +1,10 @@
 start 
-    = first:rule rest:(newline rule)* { 
+    = newline first:rule rest:(newline rule)* { 
         return [first, ...rest.map(r => r[1])]; 
     }
 
 rule 
-    = name:identifier newline "=" _ expression:choices newline ";" { 
+    = name:identifier newline "=" _ expression:choices (_ ";" _)? { 
         return { name: name, expression: expression }; 
     }
 
@@ -14,12 +14,14 @@ choices
         return [first, ...rest.map(r => r[2])];
     }
 
-
 concat 
-    = first:expression rest:(_ expression)* { 
-        // Devuelve una lista combinada de las expresiones concatenadas
-        return [first, ...rest.map(r => r[1])];
-    }
+    = pluck (_ pluck )*
+
+pluck 
+    = "@"? label
+
+label
+    = (identifier ":")? expression
 
 expression
     = par:parserexpression l:locks? { 
@@ -36,9 +38,12 @@ parexpression
     = "(" _ expression:choices _ expression2:(choices _)* ")" { return expression; }
 
 locks
-    = "?" { return "?"; }
-    / "*" { return "*"; }
-    / "+" { return "+"; }
+    = [?+*]
+    / "|" _ (number / identifier) _ "|"
+    / "|" _ (number / identifier)? _ ".." _ (number / identifier)? _ "|"
+    / "|" _ (number / identifier)? _ "," _ choices _ "|"
+    / "|" _ (number / identifier)? _ ".." _ (number / identifier)? _ "," _ choices _ "|"
+
 
 identifier 
     = name:[_a-z]i[_a-z0-9]i* { return text(); }
@@ -50,6 +55,9 @@ literal
 
 // Rango de caracteres
 range = "[" input_range+ "]"
+
+number
+    = [0-9]+
 
 input_range = [^[\]-] "-" [^[\]-]
 			/ [^[\]]+
