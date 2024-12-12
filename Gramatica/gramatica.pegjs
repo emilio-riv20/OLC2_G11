@@ -33,8 +33,8 @@ parserexpression
     / range "i"?
     / groups
     / string "i"?
-    / (_ "." _)+ (newline)?
-    / (_"!."_)+ (newline)?
+    / (_ "." _)+ _ (newline)? _
+    / (_"!."_)+ _ (newline)? _
     
 
 groups

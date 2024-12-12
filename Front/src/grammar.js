@@ -797,8 +797,10 @@ function peg$parse(input, options) {
               s1 = peg$FAILED;
             }
             if (s1 !== peg$FAILED) {
-              s2 = peg$parsenewline();
-              s1 = [s1, s2];
+              s2 = peg$parse_();
+              s3 = peg$parsenewline();
+              s4 = peg$parse_();
+              s1 = [s1, s2, s3, s4];
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -849,8 +851,10 @@ function peg$parse(input, options) {
                 s1 = peg$FAILED;
               }
               if (s1 !== peg$FAILED) {
-                s2 = peg$parsenewline();
-                s1 = [s1, s2];
+                s2 = peg$parse_();
+                s3 = peg$parsenewline();
+                s4 = peg$parse_();
+                s1 = [s1, s2, s3, s4];
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -1521,7 +1525,6 @@ function peg$parse(input, options) {
     );
   }
 }
-
 export const StartRules = ["start"];
 export const SyntaxError = peg$SyntaxError;
 export const parse = peg$parse;
