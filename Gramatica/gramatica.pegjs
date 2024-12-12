@@ -1,22 +1,19 @@
 start 
-    = newline first:rule rest:(newline rule)* newline { 
-        return [first, ...rest.map(r => r[1])]; 
-    }
+    = rule+ _
 
 rule 
-    = name:identifier newline string? newline "=" _ expression:choices newline? (_ ";" _)?
-    { 
+    = _ name:identifier _ string? _ "=" _ expression:choices _ (_ ";")? { 
         return { name: name, expression: expression }; 
     }
 
 choices 
-    = first:concat rest:(newline "/" newline concat)* { 
+    = first:concat rest:(_ "/" _ concat)* { 
         // Devuelve una lista combinada de todas las elecciones
         return [first, ...rest.map(r => r[2])];
     }
 
 concat 
-    = pluck (_ pluck )*
+    = pluck (_ pluck !"=")*
 
 pluck 
     = "@"? label
@@ -25,29 +22,18 @@ label
     = (identifier ":")? expression
 
 expression
-    = par:parserexpression l:locks? 
-    / "$"? _ parserexpression _ locks?
-    / "&"? _ parserexpression _ locks?
-    / "!"? _ parserexpression _ locks?
-    / ":"? _ parserexpression _ locks?
-    / "?"? _ parserexpression _ locks?
-    / "+"? _ parserexpression _ locks?
-    
+    = "$"* _ parserexpression locks?
 
 parserexpression
     = identifier
     / range "i"?
     / groups
     / string "i"?
-    / (_ "." _)+ _ (newline)? _
-    / (_"!."_)+ _ (newline)? _
-    
-    
+    / (_ "." _)+ _ (_)? _
+    / (_"!."_)+ _ (_)? _
 
 groups
     = "(" _ choices _ ")"
-
-
 
 locks
     = [?+*]
@@ -74,11 +60,4 @@ number
 input_range = [^[\]-] "-" [^[\]-]
 			/ [^[\]]+
 _ 
-    = [ \t]*  // Ignora espacios en blanco y tabs
-
-newline 
-    = ([ \t\n\r] / coms)*  // Maneja saltos de línea y espacios en blanco
-    
-coms 
-	="//" (![\n] .)*
-    / "/*" (!("*/") .)* "*/"
+    = [ \t\n\r]*  // Maneja saltos de línea y espacios en blanco
