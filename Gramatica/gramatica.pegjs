@@ -2,18 +2,13 @@ start
     = rule+ _
 
 rule 
-    = _ name:identifier _ string? _ "=" _ expression:choices _ (_ ";")? { 
-        return { name: name, expression: expression }; 
-    }
+    = _ identifier _ string? _ "=" _ choices (_ ";")?
 
 choices 
-    = first:concat rest:(_ "/" _ concat)* { 
-        // Devuelve una lista combinada de todas las elecciones
-        return [first, ...rest.map(r => r[2])];
-    }
+    = concat (_ "/" _ concat)*
 
 concat 
-    = pluck (_ pluck !"=")*
+    = pluck (_ pluck !(_ string? _ "="))*
 
 pluck 
     = "@"? _ label
@@ -22,7 +17,13 @@ label
     = (identifier _ ":")? _ expression
 
 expression
-    = "$"* _ parserexpression locks?
+    = par:parserexpression l:locks? 
+    / "$"? _ parserexpression _ locks?
+    / "&"? _ parserexpression _ locks?
+    / "!"? _ parserexpression _ locks?
+    / ":"? _ parserexpression _ locks?
+    / "?"? _ parserexpression _ locks?
+    / "+"? _ parserexpression _ locks?
 
 parserexpression
     = identifier
@@ -44,7 +45,7 @@ locks
 
 
 identifier 
-    = name:[_a-z]i[_a-z0-9]i* { return text(); }
+    = [_a-z]i[_a-z0-9]i*
 
 // Cadenas de texto
 string
@@ -60,4 +61,8 @@ number
 input_range = [^[\]-] "-" [^[\]-]
 			/ [^[\]]+
 _ 
-    = [ \t\n\r]*  // Maneja saltos de línea y espacios en blanco
+    = ([ \t\n\r] / coms)*  // Maneja saltos de línea y espacios en blanco
+    
+coms 
+	="//" (![\n] .)*
+    / "/*" (!("*/") .)* "*/"
